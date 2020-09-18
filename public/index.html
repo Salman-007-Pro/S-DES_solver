@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      S-Des Key Generation Numericals
+    </title>
+    <style>
+      * {
+        padding: 0;
+        box-sizing: border-box;
+      }
+      .input-area {
+        position: relative;
+        text-align: center;
+        text-transform: uppercase;
+        border: 2px solid black;
+        margin-bottom: 10px;
+      }
+      hr {
+        border: 1px solid red;
+      }
+      .input {
+        border: 3px solid blue;
+        margin: 10px;
+        padding: 10px 20px;
+        font-size: 20px;
+        display: inline-block;
+        border-radius: 100px;
+        outline: none;
+      }
+      .btn:link,
+      .btn:visited {
+        display: inline-block;
+        text-decoration: none;
+        color: black;
+        background-color: lawngreen;
+        margin: 20px 0 25px;
+        padding: 10px 20px;
+        border-radius: 20px;
+        transition: all 0.4s;
+        outline: none;
+      }
+      .btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 10px 0 rgba(0, 0, 0, 0.2);
+      }
+      .btn:active {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.2);
+      }
+      .text {
+        text-align: left;
+      }
+      #t1 hr {
+        border: 1px solid blue;
+      }
+      #t1 h2 {
+        text-decoration: underline;
+      }
+      #t3 hr {
+        border: 1px solid orange;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="input-area">
+      <h2>
+        <span class="heading">S-des Key Generation</span>
+        <hr />
+      </h2>
+      <input
+        type="text"
+        placeholder="Enter the key"
+        class="input"
+        id="input1"
+        maxlength="10"
+      />
+      <br />
+      <a href="#" class="btn" onclick="getvalue();">Enter</a>
+    </div>
+    <div class="input-area">
+      <h2>
+        <span class="heading">S-Des key Generation</span>
+        <hr />
+      </h2>
+      <div class="text">
+        <h3>Key generation:</h3>
+        <span id="t1"></span>
+      </div>
+    </div>
+    <script>
+      var add = {
+        "00": "0",
+        "10": "1",
+        "01": "1",
+        "11": "0"
+      };
+      var p10 = [3, 5, 2, 7, 4, 10, 1, 9, 8, 6];
+      var p8 = [6, 3, 7, 4, 8, 5, 10, 9];
+      function getvalue() {
+        document.getElementById("t1").innerHTML=null;
+        var i,
+          check = 10,
+          a,
+          x;
+        var prob = new Array();
+        var key = document.getElementById("input1").value;
+        var check = check - key.length;
+        //console.log(key);
+        //console.log(check);
+        if (check != 0) {
+          a = Math.pow(2, check);
+          var zero = new Array();
+          for (i = 0; i < check; i++) {
+            zero[i] = "0";
+          }
+
+          var v = "";
+          for (z = 0; z < zero.length; z++) {
+            v += zero[z];
+          }
+          key = "0" + key;
+          prob[0] = key + v;
+
+          for (i = 1; i <= a - 1; i++) {
+            var count = 0;
+            var len = zero.length - 1;
+            for (j = 0; j < check; j++) {
+              var c = zero[len - j] + "1";
+              var n = add[c];
+              if (n == 1) {
+                zero[len - count] = n;
+                break;
+              } else {
+                zero[len - count] = n;
+              }
+              count++;
+            }
+            var v = "";
+            for (z = 0; z < zero.length; z++) {
+              v += zero[z];
+            }
+            prob[i] = key + v;
+          }
+        }
+        console.log(prob);
+        if (prob.length == 0) {
+          a = 1;
+          prob[0] = "0" + key;
+        } else {
+          a = prob.length;
+        }
+        for (w = 0; w < a; w++) {
+          //p10;
+          var afterp10 = "",
+            afterp8 = "";
+          for (i = 0; i < p10.length; i++) {
+            afterp10 = afterp10 + prob[w][p10[i]];
+          }
+          var l = afterp10.slice(0, 5);
+          var r = afterp10.slice(5);
+          // console.log("L:"+l);
+          //console.log("r:"+r);
+          l = l.slice(1) + l[0];
+          r = r.slice(1) + r[0];
+          var l1 = l;
+          var r1 = r;
+          // console.log("L:"+l);
+          //console.log("r:"+r);
+          var join = "0" + l + r;
+          for (i = 0; i < p8.length; i++) {
+            afterp8 = afterp8 + join[p8[i]];
+          }
+          var k1 = afterp8;
+          afterp8 = "";
+          l = l.slice(2) + l[0] + l[1];
+          r = r.slice(2) + r[0] + r[1];
+          var join = "0" + l + r;
+          for (i = 0; i < p8.length; i++) {
+            afterp8 = afterp8 + join[p8[i]];
+          }
+          var k2 = afterp8;
+          // console.log(key.slice(1))
+          // console.log(k1)
+          // console.log(k2)
+          var wr = document.getElementById("t1").innerHTML;
+          document.getElementById("t1").innerHTML =
+            wr +
+            "<h2>Round No: " +
+            (w + 1) +
+            "</h2><br><strong>Key: </strong>" +
+            prob[w].slice(1).replace(/(\d{5})/g, "$1 ").replace(/(^\s+|\s+$)/, "") +
+            "<br/><strong>Apply P10: </strong>" +
+            afterp10.replace(/(\d{5})/g, "$1 ").replace(/(^\s+|\s+$)/, "") +
+            "<br/><h3>::Equal Divide(apply ls-1)::</h3><strong>L: </strong>" +
+            l1 +
+            "<br/><strong>R: </strong>" +
+            r1 +
+            "<br/><h3>Apply P8: </h3><strong>K1: </strong>" +
+            k1.replace(/(\d{4})/g, "$1 ").replace(/(^\s+|\s+$)/, "") +
+            "<br/><h3>::Apply ls-2::</h3><strong>L: </strong>" +
+            l +
+            "<br/><strong>R: </strong>" +
+            r +
+            "<br/><h3>Apply P8: </h3><strong>K2: </strong>" +
+            k2.replace(/(\d{4})/g, "$1 ").replace(/(^\s+|\s+$)/, "") +
+            "<br><br><hr>";
+        }
+      }
+    </script>
+  </body>
+</html>
